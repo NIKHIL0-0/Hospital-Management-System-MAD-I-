@@ -1,0 +1,29 @@
+/* Custom styles to complement Bootstrap */
+body {
+    background-color: #f8f9fa;
+}
+
+/* Enhanced card styling */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar button active state */
+.navbar .btn.active {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: #0d6efd !important;
+    font-weight: 600;
+}
+
+.navbar .btn-outline-light.active {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #0d6efd !important;
+    border-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.navbar .btn-outline-warning.active {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+    border-color: #ffc107 !important;
+}

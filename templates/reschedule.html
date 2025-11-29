@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Reschedule Appointment</h3>
+<p>Current: {{ appointment.date }} {{ appointment.time }}</p>
+
+<form method="POST" class="card p-3">
+  <div class="mb-2">Select a new slot:</div>
+  <div class="row">
+    {% for s in slots %}
+      <div class="col-md-4 mb-2">
+        <label class="w-100">
+          <input type="radio" name="availability_id" value="{{ s.id }}" required>
+          <span class="ms-2">{{ s.date }} {{ s.start_time }}-{{ s.end_time }}</span>
+        </label>
+      </div>
+    {% endfor %}
+  </div>
+  <button class="btn btn-primary mt-2">Reschedule</button>
+  <a class="btn btn-secondary mt-2" href="{{ url_for('patient.dashboard') }}">Cancel</a>
+</form>
+{% endblock %}

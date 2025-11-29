@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Edit Patient</h3>
+<form method="POST" class="card p-3">
+  <div class="row g-3">
+    <div class="col-md-2">
+      <label class="form-label">Age</label>
+      <input type="number" name="age" value="{{ patient.age }}" class="form-control">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Blood Group</label>
+      <input type="text" name="blood_group" value="{{ patient.blood_group or '' }}" class="form-control">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Height</label>
+      <input type="text" name="height" value="{{ patient.height or '' }}" class="form-control" placeholder="e.g. 170cm">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Weight</label>
+      <input type="text" name="weight" value="{{ patient.weight or '' }}" class="form-control" placeholder="e.g. 70kg">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Phone</label>
+      <input type="text" name="phone" value="{{ patient.phone or '' }}" class="form-control">
+    </div>
+    <div class="col-12">
+      <label class="form-label">Address</label>
+      <textarea name="address" class="form-control" rows="2">{{ patient.address or '' }}</textarea>
+    </div>
+    <div class="col-12">
+      <label class="form-label">Special Notes (Allergies, Medical Conditions, etc.)</label>
+      <textarea name="special_notes" class="form-control" rows="3">{{ patient.special_notes or '' }}</textarea>
+    </div>
+  </div>
+  <div class="mt-3">
+    <button class="btn btn-success">Save</button>
+    <a class="btn btn-secondary" href="{{ url_for('admin.manage_patients') }}">Back</a>
+  </div>
+</form>
+{% endblock %}

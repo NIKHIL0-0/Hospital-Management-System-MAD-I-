@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .analytics-container { max-width: 100%; overflow: hidden; }
+  .top-chart { background: #fff; border-radius: .5rem; padding: 1.5rem; margin-bottom: 1rem; height: 450px; border: 1px solid #dee2e6; }
+  .bottom-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 991px) { .bottom-charts { grid-template-columns: 1fr; } }
+  .chart-box { background: #fff; border-radius: .5rem; padding: 1.5rem; height: 400px; position: relative; border: 1px solid #dee2e6; }
+  .chart-box h5 { font-weight: 600; margin-bottom: 1rem; }
+  .chart-wrapper { position: relative; height: calc(100% - 40px); }
+  .heatmap-wrapper { height: calc(100% - 40px); overflow: auto; }
+  table.heatmap { font-size: .75rem; border-collapse: collapse; width: 100%; }
+  table.heatmap th, table.heatmap td { padding: 6px 8px; text-align: center; border: 1px solid #e9ecef; }
+  table.heatmap td { min-width: 38px; }
+  .cell-0 { background:#f8f9fa; }
+  .cell-1 { background:#e0f7fa; }
+  .cell-2 { background:#b2ebf2; }
+  .cell-3 { background:#80deea; }
+  .cell-4 { background:#4dd0e1; }
+  .cell-5 { background:#26c6da; color:#fff; }
+  .cell-6 { background:#00bcd4; color:#fff; }
+  .cell-7 { background:#00acc1; color:#fff; }
+  .cell-8 { background:#0097a7; color:#fff; }
+  .cell-9, .cell-10 { background:#00838f; color:#fff; }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Analytics Dashboard</h3>
+  <a class="btn btn-secondary" href="{{ url_for('admin.dashboard') }}">Back</a>
+</div>
+
+<div class="analytics-container">
+  <!-- Top Large Chart -->
+  <div class="top-chart">
+    <h5>Daily Patient Bookings (Last 30 Days)</h5>
+    <div class="chart-wrapper">
+      <canvas id="lineChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Bottom Two Charts -->
+  <div class="bottom-charts">
+    <div class="chart-box">
+      <h5>Patients per Department</h5>
+      <div class="chart-wrapper">
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-box">
+      <h5>Patient Volume by Hour (Last 7 Days)</h5>
+      <div class="heatmap-wrapper">
+        <table class="heatmap">
+          <thead>
+            <tr>
+              <th>Day</th>
+              {% for h in hours %}<th>{{ h.split(':')[0] }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for day in heat_days %}
+              {% set d_index = loop.index0 %}
+              <tr>
+                <th>{{ day }}</th>
+                {% for h_index in range(hours|length) %}
+                  {% set val = heatmap[d_index][h_index] %}
+                  {% set bucket = val if val < 10 else 10 %}
+                  <td class="cell-{{ bucket }}" title="{{ day }} {{ hours[h_index] }}: {{ val }}">{{ val }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  // Line Chart Data
+  const lineCtx = document.getElementById('lineChart');
+  new Chart(lineCtx, {
+    type: 'line',
+    data: {
+      labels: {{ day_labels|tojson }},
+      datasets: [{
+        label: 'Bookings',
+        data: {{ daily_counts|tojson }},
+        borderColor: '#0d6efd',
+        backgroundColor: 'rgba(13,110,253,.15)',
+        tension: .25,
+        fill: true,
+        pointRadius: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { maxRotation: 0, autoSkip: true } },
+        y: { beginAtZero: true, title: { display: true, text: 'Appointments' } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { mode: 'index', intersect: false }
+      }
+    }
+  });
+
+  // Pie Chart
+  const pieCtx = document.getElementById('pieChart');
+  new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+      labels: {{ dept_labels|tojson }},
+      datasets: [{
+        data: {{ dept_data|tojson }},
+        backgroundColor: [
+          '#0d6efd','#6610f2','#6f42c1','#d63384','#dc3545','#fd7e14','#ffc107','#198754','#20c997','#0dcaf0'
+        ]
+      }]
+    },
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 15, padding: 10 } }
+      }
+    }
+  });
+</script>
+{% endblock %}

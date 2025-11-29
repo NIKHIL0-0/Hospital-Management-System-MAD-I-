@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Admin Dashboard</h2>
+    
+    <!-- Stats Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card p-4 h-100">
+                <h5 class="text-muted">Total Doctors</h5>
+                <h2 class="text-primary mb-0">{{ doctor_count }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card p-4 h-100">
+                <h5 class="text-muted">Total Patients</h5>
+                <h2 class="text-success mb-0">{{ patient_count }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card p-4 h-100">
+                <h5 class="text-muted">Total Appointments</h5>
+                <h2 class="text-info mb-0">{{ appointment_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Quick Actions</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <a href="{{ url_for('admin.add_doctor') }}" class="btn btn-success w-100 py-3">
+                        Add New Doctor
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{{ url_for('admin.manage_doctors') }}" class="btn btn-warning w-100 py-3">
+                        Manage Doctors
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{{ url_for('admin.manage_patients') }}" class="btn btn-info w-100 py-3">
+                        Manage Patients
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{{ url_for('admin.view_appointments') }}" class="btn btn-primary w-100 py-3">
+                        View Appointments
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

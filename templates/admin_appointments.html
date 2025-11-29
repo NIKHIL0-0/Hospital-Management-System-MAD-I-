@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>All Appointments</h3>
+  <a class="btn btn-secondary" href="{{ url_for('admin.dashboard') }}">Back</a>
+</div>
+
+<form method="GET" class="row g-2 align-items-end mb-3">
+  <div class="col-md-3">
+    <label class="form-label">Status</label>
+    <select name="status" class="form-select">
+      <option value="all">All</option>
+      <option value="Booked">Booked</option>
+      <option value="Completed">Completed</option>
+      <option value="Cancelled">Cancelled</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">When</label>
+    <select name="when" class="form-select">
+      <option value="all">All</option>
+      <option value="upcoming">Upcoming</option>
+      <option value="past">Past</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-primary w-100">Filter</button>
+  </div>
+</form>
+
+{% for a in appointments %}
+  <div class="card p-2 my-2 d-flex flex-row justify-content-between align-items-center">
+    <div>
+      <b>Patient:</b> {{ a.patient.user.name }} |
+      <b>Doctor:</b> {{ a.doctor.user.name }} |
+      <b>Date:</b> {{ a.date }} |
+      <b>Time:</b> {{ a.time }} |
+      <b>Status:</b> {{ a.status }}
+    </div>
+    {% if a.status == 'Booked' %}
+      <a class="btn btn-sm btn-danger" href="{{ url_for('admin.cancel_appointment', appointment_id=a.id) }}">Cancel</a>
+    {% endif %}
+  </div>
+{% else %}
+  <div class="alert alert-light">No appointments found.</div>
+{% endfor %}
+{% endblock %}

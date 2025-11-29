@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Search</h3>
+<form method="POST" class="row g-2 align-items-end mb-3">
+  <div class="col-md-6">
+    <label class="form-label">Query</label>
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Name, specialization, phone, or ID" required>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Target</label>
+    <select name="target" class="form-select">
+      <option value="doctors" {% if target=='doctors' %}selected{% endif %}>Doctors</option>
+      <option value="patients" {% if target=='patients' %}selected{% endif %}>Patients</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-primary w-100">Search</button>
+  </div>
+  </form>
+
+{% if target=='doctors' %}
+  <h5>Doctors</h5>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Department</th><th>Experience</th></tr></thead>
+      <tbody>
+        {% for d in results.doctors %}
+          <tr>
+            <td>{{ d.id }}</td>
+            <td>{{ d.user.name }}</td>
+            <td>{{ d.user.email }}</td>
+            <td>{{ d.department.name }}</td>
+            <td>{{ d.experience }} yrs</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <h5>Patients</h5>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Active</th></tr></thead>
+      <tbody>
+        {% for p in results.patients %}
+          <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.user.name }}</td>
+            <td>{{ p.user.email }}</td>
+            <td>{{ p.phone or '-' }}</td>
+            <td>{{ 'Yes' if p.user.is_active else 'No' }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;">
+    <title>Hospital Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container mt-2">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid">
+             <a class="navbar-brand" href="/">HMS</a>
+
+            <div class="d-flex">
+                {% if current_user.is_authenticated %}
+        
+                    {% if current_user.role == 'admin' %}
+                    <a class="btn btn-light me-2 {% if request.path == url_for('admin.dashboard') %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a>
+                    <a class="btn btn-outline-light me-2 {% if request.path == url_for('admin.manage_patients') %}active{% endif %}" href="{{ url_for('admin.manage_patients') }}">Patients</a>
+                    <a class="btn btn-outline-light me-2 {% if request.path == url_for('admin.view_appointments') %}active{% endif %}" href="{{ url_for('admin.view_appointments') }}">Appointments</a>
+                    <a class="btn btn-outline-light me-2 {% if request.path == url_for('admin.search') %}active{% endif %}" href="{{ url_for('admin.search') }}">Search</a>
+                    <a class="btn btn-outline-warning me-2 {% if request.path == url_for('admin.analytics') %}active{% endif %}" href="{{ url_for('admin.analytics') }}">Analytics</a>
+                    {% elif current_user.role == 'doctor' %}
+                    <a class="btn btn-light me-2 {% if request.path == url_for('doctor.dashboard') %}active{% endif %}" href="{{ url_for('doctor.dashboard') }}">Doctor Dashboard</a>
+                    <a class="btn btn-outline-light me-2 {% if request.path == url_for('doctor.manage_availability') %}active{% endif %}" href="{{ url_for('doctor.manage_availability') }}">Availability</a>
+                    {% elif current_user.role == 'patient' %}
+                    <a class="btn btn-light me-2 {% if request.path == url_for('patient.dashboard') %}active{% endif %}" href="{{ url_for('patient.dashboard') }}">Patient Dashboard</a>
+                    <a class="btn btn-outline-light me-2 {% if request.path == url_for('patient.profile') %}active{% endif %}" href="{{ url_for('patient.profile') }}">Profile</a>
+                    {% endif %}
+
+                    <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">Logout</a>
+                
+                {% else %}
+                    <a class="btn btn-light me-2" href="{{ url_for('auth.login') }}">Login</a>
+                    <a class="btn btn-outline-light" href="{{ url_for('auth.register') }}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- Bootstrap JS is required for interactive components -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

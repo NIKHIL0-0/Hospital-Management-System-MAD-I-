@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">🩺 Available Doctors{% if department %} - {{ department.name }}{% endif %}</h3>
+                </div>
+                <div class="card-body">
+                    {% if doctors %}
+                        <div class="row">
+                            {% for doc in doctors %}
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">{{ doc.user.name }}</h5>
+                                            <p class="card-text">
+                                                <strong>🏥 Department:</strong> {{ doc.department.name }}<br>
+                                                <strong>📅 Experience:</strong> {{ doc.experience }} years<br>
+                                                <strong>🕐 Slots next 7 days:</strong> {{ availability_by_doctor[doc.id] if availability_by_doctor else 0 }}
+                                            </p>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <a class="btn btn-success w-100" 
+                                               href="{{ url_for('patient.book_appointment', doctor_id=doc.id) }}">
+                                                📋 Book Appointment
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning text-center">
+                            <h5>🔍 No Doctors Found</h5>
+                            <p>No doctors are currently available in {% if department %}{{ department.name }}{% else %}this department{% endif %}.</p>
+                            <p>Please try selecting a different department or contact the hospital administration.</p>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('patient.dashboard') }}" class="btn btn-secondary">
+                            ⬅️ Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

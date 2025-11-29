@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Welcome Dr. {{ name }} </h2>
+<hr>
+
+<h4>Upcoming Appointments</h4>
+<div class="mb-2">
+  <a class="btn btn-outline-primary btn-sm" href="{{ url_for('doctor.manage_availability') }}">Manage Availability</a>
+  <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('doctor.dashboard') }}">Refresh</a>
+  </div>
+{% if appointments %}
+  {% for a in appointments %}
+    <div class="card p-3 my-2">
+      <p>Patient: {{ a.patient.user.name }} | {{ a.date }} {{ a.time }}</p>
+
+      <a href="{{ url_for('doctor.update_appointment', appointment_id=a.id) }}"
+         class="btn btn-success btn-sm">Mark Completed</a>
+
+      <a href="{{ url_for('doctor.cancel_appointment', appointment_id=a.id) }}"
+         class="btn btn-danger btn-sm">Cancel</a>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>No appointments.</p>
+{% endif %}
+
+{% endblock %}

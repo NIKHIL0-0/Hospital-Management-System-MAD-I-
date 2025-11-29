@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title text-primary">🏥 Patient Dashboard</h2>
+                    <h4 class="text-muted">Welcome, {{ name }}! 👋</h4>
+                    <p class="text-muted">Manage your appointments and find doctors here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🔍 Find Doctors</h5>
+                </div>
+                <div class="card-body">
+                    {% if departments %}
+                        <form method="POST" action="{{ url_for('patient.list_doctors') }}">
+                            <div class="mb-3">
+                                <label for="department_id" class="form-label">Select Department:</label>
+                                <select name="department_id" id="department_id" class="form-select" required>
+                                    <option value="">Choose a department...</option>
+                                    {% for d in departments %}
+                                        <option value="{{ d.id }}">{{ d.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Find Doctors</button>
+                        </form>
+                        <hr>
+                        <form method="GET" action="{{ url_for('patient.search_doctors') }}" class="d-flex">
+                            <input type="text" class="form-control me-2" name="q" placeholder="Search doctor by name">
+                            <button class="btn btn-outline-primary">Search</button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <strong>No departments available</strong><br>
+                            Please contact the administrator to set up medical departments.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">📅 Upcoming Appointments</h5>
+                </div>
+                <div class="card-body">
+                    {% if upcoming %}
+                        {% for a in upcoming %}
+                            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Doctor:</strong> {{ a.doctor.user.name }}<br>
+                                    <strong>Date:</strong> {{ a.date }}<br>
+                                    <strong>Time:</strong> {{ a.time }}
+                                </div>
+                                <a class="btn btn-sm btn-warning me-2" 
+                                   href="{{ url_for('patient.reschedule_appointment', appointment_id=a.id) }}">
+                                    Reschedule
+                                </a>
+                                <a class="btn btn-sm btn-danger" 
+                                   href="{{ url_for('patient.cancel_appointment', appointment_id=a.id) }}">
+                                    Cancel
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert alert-secondary">
+                            <strong>No upcoming appointments</strong><br>
+                            Book your first appointment using the "Find Doctors" section.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <!-- Navigation tabs -->
+            <ul class="nav nav-tabs" id="patientTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#appointments">
+                        📋 Appointment History
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#medical-history">
+                        🩺 Medical History
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3">
+                <!-- Appointment History Tab -->
+                <div class="tab-pane fade show active" id="appointments">
+                    <div class="card">
+                        <div class="card-body">
+                            {% if history %}
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Time</th>
+                                                <th>Status</th>
+                                                <th>Doctor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for h in history %}
+                                                <tr>
+                                                    <td>{{ h.date }}</td>
+                                                    <td>{{ h.time }}</td>
+                                                    <td>
+                                                        <span class="badge {% if h.status == 'Completed' %}bg-success{% elif h.status == 'Cancelled' %}bg-danger{% else %}bg-warning{% endif %}">
+                                                            {{ h.status }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ h.doctor.user.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-light">
+                                    <strong>No appointment history</strong><br>
+                                    Your completed and cancelled appointments will appear here.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical History Tab -->
+                <div class="tab-pane fade" id="medical-history">
+                    <div class="card">
+                        <div class="card-body">
+                            {% if full_history %}
+                                {% for t, a, doc, d_user, dept in full_history %}
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <small class="text-muted">📅 Date of Visit:</small><br>
+                                                    <strong>{{ a.date }}</strong>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <small class="text-muted">👨‍⚕️ Doctor:</small><br>
+                                                    <strong>Dr. {{ d_user.name }}</strong>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <small class="text-muted">🏥 Department:</small><br>
+                                                    <strong>{{ dept.name }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-2">
+                                                    <strong>🔍 Diagnosis:</strong>
+                                                    <p class="mb-1">{{ t.diagnosis }}</p>
+                                                </div>
+                                                <div class="col-md-12 mb-2">
+                                                    <strong>💊 Prescription:</strong>
+                                                    <p class="mb-1">{{ t.prescription }}</p>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <strong>📝 Notes:</strong>
+                                                    <p class="mb-0">{{ t.notes }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> <strong>No medical history available yet.</strong><br>
+                                    Your completed medical treatments and diagnoses will appear here.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
