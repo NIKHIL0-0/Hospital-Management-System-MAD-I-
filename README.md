@@ -19,7 +19,7 @@ A Flask-based web application for managing hospital operations including patient
 - **Authentication**: Flask-Login
 - **Frontend**: Jinja2, Bootstrap 5.3.0, Chart.js 4.4.0
 - **Security**: Werkzeug password hashing (PBKDF2)
-
+## Demo : https://drive.google.com/file/d/15cjLtxL9qsZ8wvRn9g0nki3eweZzyk-h/view?usp=sharing
 ## Installation
 
 1. Clone the repository:
@@ -140,10 +140,7 @@ rm -f hms.db && python app.py
 - Session management with Flask-Login
 - Role-based access control on all routes
 
-## License
-
-This project is created for educational purposes as part of the Modern Application Development course.
-
 ## Author
 
 Roll Number: 23f3001617
+
